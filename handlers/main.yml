@@ -1,0 +1,27 @@
+- name: restart service
+  assert: { that: True }
+  changed_when: True
+  notify:
+    - validate conf
+    - restart supervisor
+    - restart initd
+
+- name: validate conf
+  command: "{{logstash_java_bin}} -jar {{logstash_agent_arg}} {{logstash_etc_dir}} --configtest"
+  changed_when: False
+  register: logstash_configtest
+  failed_when: logstash_configtest.rc != 0
+
+- name: restart supervisor
+  service: 
+    name=supervisor 
+    state=restarted 
+    enabled=yes
+  when: logstash_start_stop == "supervisor"
+
+- name: restart initd
+  service: 
+    name=logstash 
+    state=restarted 
+    enabled=yes
+  when: logstash_start_stop == "initd"

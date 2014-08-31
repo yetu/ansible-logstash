@@ -1,0 +1,9 @@
+- name: java | check if java is installed
+  stat:
+     path="{{logstash_java_bin}}"
+  register: java_exist
+
+- name: java | Fail if java is not installed
+  fail: 
+     msg="Java not installed"
+  when: java_exist.stat.exists == False  

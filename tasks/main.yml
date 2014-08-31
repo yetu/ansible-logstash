@@ -1,0 +1,9 @@
+---
+
+- include: java.yml
+
+- include: logstash.yml
+
+- include: start-stop.yml
+ 
+  

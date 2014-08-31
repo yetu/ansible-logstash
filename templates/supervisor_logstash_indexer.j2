@@ -1,0 +1,8 @@
+[program:logstash-indexer]
+process_name=logstash-indexer
+command={{logstash_java_bin}} -jar {{logstash_agent_arg}} {{logstash_etc_dir}}
+user=root
+startretries=3
+redirect_stderr=true
+std_out_logfile=NONE
+startsecs=3

@@ -1,0 +1,42 @@
+
+logstash_url            : "https://download.elasticsearch.org/logstash/logstash/logstash"
+logstash_version        : "1.3.3"
+logstash_start_stop     : "initd" ## initd or supervisor
+
+##dir setup
+logstash_install_dir    : "/opt/logstash/{{logstash_version}}"
+logstash_etc_dir        : "/etc/logstash.d/indexer/"
+logstash_log_dir        : "/var/log/logstash"
+
+logstash_java_bin       : "/usr/bin/java"
+logstash_java_arg       : "-jar"
+logstash_agent_arg      : "{{logstash_install_dir}}/logstash-{{logstash_version}}-flatjar.jar agent -f "
+logstash_extra_arg      : ""
+
+
+## Default values you could overwrite them
+logstash_input :  |
+    tcp { 
+        port => 3030
+        type => "tcp"
+    }
+
+logstash_filter :  |
+    # dummy filter. Add your own
+    if [type] =~ "somemessage" {
+        mutate {
+            add_tag => [ "somemessage" ]
+        }
+    }
+    # example add field tcp
+    if [type] == "tcp" {
+        mutate {
+            add_field => { "source" => "MSG was sent by %{host} to tcp" }
+        }
+    }
+
+logstash_output :  |
+    file {
+        path => "/tmp/stdout_logstash.txt"
+    }
+

@@ -1,0 +1,65 @@
+## TODO: Make sure service running
+
+- name: logstash | Create Logstash dir
+  file: 
+    path="{{ logstash_install_dir }}" 
+    owner=root 
+    group=root 
+    mode=0755 
+    state=directory
+
+- name: logstash | Fetch Logstash Jar
+  get_url: 
+    url={{ logstash_url }}-{{ logstash_version }}-flatjar.jar 
+    dest={{ logstash_install_dir }}/logstash-{{ logstash_version }}-flatjar.jar
+
+- name: logstash | Create main Logstash dir
+  file: 
+    path="/etc/logstash.d/" 
+    owner=root 
+    group=root 
+    mode=0755 
+    state=directory
+
+- name: logstash | Create main Logstash indexer dir
+  file: 
+    path="{{logstash_etc_dir}}" 
+    owner=root 
+    group=root 
+    mode=0755 
+    state=directory
+
+- name: logstash | Create log directory
+  file: 
+    path="{{logstash_log_dir}}" 
+    owner=root 
+    group=root 
+    mode=0755 
+    state=directory
+
+- name: logstash | Create Logstash Indexer input configuration
+  template: 
+    src=logstash-indexer/input.j2 
+    dest="{{logstash_etc_dir}}/input.conf" 
+    owner=root 
+    group=root 
+    mode=0644
+  notify: restart service
+
+- name: logstash | Create Logstash Indexer filters configuration
+  template: 
+    src=logstash-indexer/filters.j2
+    dest="{{logstash_etc_dir}}/filters.conf" 
+    owner=root 
+    group=root
+    mode=0644
+  notify: restart service    
+
+- name: logstash | Create Logstash Indexer output configuration
+  template: 
+    src=logstash-indexer/output.j2 
+    dest="{{logstash_etc_dir}}/output.conf" 
+    owner=root 
+    group=root 
+    mode=0644
+  notify: restart service

@@ -1,4 +1,4 @@
-- name: restart service
+- name: restart logstash-server
   assert: { that: True }
   changed_when: True
   notify:
@@ -7,7 +7,7 @@
     - restart initd
 
 - name: validate conf
-  command: "{{logstash_java_bin}} -jar {{logstash_agent_arg}} {{logstash_etc_dir}} --configtest"
+  command: "{{logstash_start_cmd}} --configtest"
   changed_when: False
   register: logstash_configtest
   failed_when: logstash_configtest.rc != 0
@@ -19,9 +19,16 @@
     enabled=yes
   when: logstash_start_stop == "supervisor"
 
-- name: restart initd
+- name: restart initd logstash-server
   service: 
     name=logstash 
+    state=restarted 
+    enabled=yes
+  when: logstash_start_stop == "initd"
+
+- name: restart kibana
+  service: 
+    name=kibana 
     state=restarted 
     enabled=yes
   when: logstash_start_stop == "initd"

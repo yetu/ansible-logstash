@@ -1,0 +1,30 @@
+## TODO: Make sure service running
+
+- name: logstash | Create Logstash Indexer input configuration
+  template: 
+    src=logstash-indexer/input.j2 
+    dest="{{logstash_etc_dir}}/input.conf" 
+    owner=root 
+    group=root 
+    mode=0644
+  notify: restart logstash-server
+
+- name: logstash | Create Logstash Indexer filters configuration
+  template: 
+    src=logstash-indexer/filters.j2
+    dest="{{logstash_etc_dir}}/filters.conf" 
+    owner=root 
+    group=root
+    mode=0644
+  notify: restart logstash-server  
+  tags: logstash-server
+
+- name: logstash | Create Logstash Indexer output configuration
+  template: 
+    src=logstash-indexer/output.j2 
+    dest="{{logstash_etc_dir}}/output.conf" 
+    owner=root 
+    group=root 
+    mode=0644
+  notify: restart logstash-server
+  tags: logstash-server

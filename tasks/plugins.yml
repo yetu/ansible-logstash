@@ -1,0 +1,11 @@
+---
+## Not functional for now
+- name: plugins | grok extra patterns
+  copy: 
+    src="{{item}}"
+    dest="{{logstash_etc_dir}}/{{item}}" 
+    owner=root 
+    group=root 
+    mode=0644
+  when: extra_patterns
+  tags: logstash-server  

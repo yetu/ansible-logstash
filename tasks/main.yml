@@ -1,9 +1,19 @@
 ---
-
 - include: java.yml
+  tags:
+    - logstash-server   
+    - kibana
 
-- include: logstash.yml
+- include: logstash_install.yml
+  tags:
+    - logstash-server   
+    - kibana
+
+- include: logstash_config.yml
+  tags: logstash-server
+
 
 - include: start-stop.yml
- 
-  
+  tags:
+    - logstash-server
+    - kibana    

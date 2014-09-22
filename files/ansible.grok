@@ -1,0 +1,23 @@
+## Ansible log grok patern test
+
+ANSIBLE_BASIC %{TIMESTAMP_ISO8601:time} p=%{INT:process} u=%{USER:user} \|
+
+ANSIBLE_COMMAND %{ANSIBLE_BASIC} %{SPACE}%{UNIXPATH:path} %{GREEDYDATA:arguments}
+
+ANSIBLE_ERROR %{ANSIBLE_BASIC} %{SPACE}%{LOGLEVEL:level}:%{GREEDYDATA:arguments}
+
+ANSIBLE_RECAP %{ANSIBLE_BASIC} %{SPACE}%{IPORHOST:host}%{SPACE}\: ok=%{INT:ok}%{SPACE}changed=%{INT:changed}%{SPACE}unreachable=%{INT:unreachable}%{SPACE}failed=%{INT:failed}
+
+## 2014-09-01 20:15:46,775 p=52836 u=helal |  skipping: [vagrant2] => YYYyyYYYY 
+ANSIBLE_RESULTS (changed|ok|skipping|changed|fatal)
+ANSIBLE_ACTION %{ANSIBLE_BASIC}%{SPACE}%{ANSIBLE_RESULTS:result}:%{SPACE}(?:\[%{IPORHOST:host}\])(%{SPACE}=\>%{SPACE}%{GREEDYDATA:arguments})?
+
+
+#NOTIFIED: or TASK:
+
+## Ignore
+# "PLAY RECAP *""
+
+
+
+

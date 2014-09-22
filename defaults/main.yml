@@ -1,18 +1,27 @@
 
-logstash_url            : "https://download.elasticsearch.org/logstash/logstash/logstash"
-logstash_version        : "1.3.3"
-logstash_start_stop     : "initd" ## initd or supervisor
-
-##dir setup
+## Version
+logstash_version_major  : "1.4"
+logstash_version_minor  : "2"
+## Director structure 
 logstash_install_dir    : "/opt/logstash/{{logstash_version}}"
+logstash_sources_dir    : "/opt/logstash/source"
+logstash_extra_dir      : "/opt/logstash/extra"
 logstash_etc_dir        : "/etc/logstash.d/indexer/"
 logstash_log_dir        : "/var/log/logstash"
 
-logstash_java_bin       : "/usr/bin/java"
-logstash_java_arg       : "-jar"
-logstash_agent_arg      : "{{logstash_install_dir}}/logstash-{{logstash_version}}-flatjar.jar agent -f "
-logstash_extra_arg      : ""
+## Startup variables
+logstash_start_stop     : "initd" ## initd or supervisor
 
+logstash_bin            : "{{logstash_install_dir}}/bin/logstash"
+logstash_agent_arg      : "agent -f"
+logstash_extra_arg      : ""
+logstash_start_cmd      : "{{logstash_bin}} {{logstash_agent_arg}} {{logstash_extra_arg}} {{logstash_etc_dir}}" 
+
+kibana_bin              : "{{logstash_install_dir}}/bin/logstash-web"
+## Download URL
+logstash_url            : "https://download.elasticsearch.org/logstash/logstash/logstash"
+##compiled full version string
+logstash_version        : "{{logstash_version_major}}.{{logstash_version_minor}}"
 
 ## Default values you could overwrite them
 logstash_input :  |

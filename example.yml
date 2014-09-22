@@ -3,4 +3,4 @@
   sudo: true
   
   roles:
-    - { role: asnible-logstash }
+    - { role: adham.helal.logstash }

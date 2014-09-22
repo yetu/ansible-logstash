@@ -7,17 +7,17 @@ RUN_AS_USER="root"
 RUN_AS_GROUP="root"
 BASE_DIR="{{logstash_install_dir}}"
 
-GREP_NAME="flatjar.jar"
+GREP_NAME="runner.rb web"
 
-ExecFile="{{logstash_bin}}"
-ExecArg=" {{logstash_agent_arg}} {{logstash_etc_dir}}"
+ExecFile="{{kibana_bin}}"
+ExecArg=""
 
 STOPCMD="kill -9"
 #How many sec to wait before checking if proc is up
 SLEEP_FOR=5
 
 JAVA_PID() {
-    check_java="$(ps aux| grep -e $GREP_NAME | grep -v grep | awk '{ print $2 }' )"
+    check_java="$(ps aux| grep -e '$GREP_NAME' | grep -v grep | awk '{ print $2 }' )"
     echo $check_java
 }
 start(){
@@ -30,7 +30,7 @@ start(){
             $ExecFile $ExecArg
         else
             echo -n  "Starting $NAME "    
-            $ExecFile $ExecArg >> {{logstash_log_dir}}/logstash.log 2>&1 &
+            $ExecFile $ExecArg >> {{logstash_log_dir}}/kibana.log 2>&1 &
             [ "$?" -ne 0 ] && echo "[ FAILED ]" && return 1
             let kwait=$SLEEP_FOR
             count=0;

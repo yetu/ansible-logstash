@@ -1,21 +1,34 @@
-- name: start-stop | Create supervisor config for the logstash indexer
+##TODO: kibana supervisor config
+
+- name: start-stop | Create supervisor config for the logstash-server
   template: 
     src=supervisor_logstash_indexer.j2 
     dest="/etc/supervisor/conf.d/logstash_indexer.conf" 
     owner=root 
     group=root 
     mode=0644
-  notify:
-   - restart service
+  notify: restart logstash-server
   when: logstash_start_stop == "supervisor"
+  tags: logstash-server
 
-- name: start-stop | Create init.d script
+- name: start-stop | Create init.d script logstash-server
   template: 
     src=initd_logstash_index.j2
     dest="/etc/init.d/logstash" 
     owner=root 
     group=root 
     mode=0755
-  notify:
-   - restart service
+  notify: restart logstash-server
   when: logstash_start_stop == "initd"
+  tags: logstash-server  
+
+- name: start-stop | Create init.d script for kibana
+  template: 
+    src=initd_kibana.j2
+    dest="/etc/init.d/kibana" 
+    owner=root 
+    group=root 
+    mode=0755
+  notify: restart kibana
+  when: logstash_start_stop == "initd"
+  tags: kibana

@@ -7,7 +7,6 @@ RUN_AS_USER="root"
 RUN_AS_GROUP="root"
 BASE_DIR="{{logstash_install_dir}}"
 
-GREP_NAME="flatjar.jar"
 
 ExecFile="{{logstash_bin}}"
 ExecArg=" {{logstash_agent_arg}} {{logstash_etc_dir}}"
@@ -17,17 +16,18 @@ STOPCMD="kill -9"
 SLEEP_FOR=5
 
 JAVA_PID() {
-    check_java="$(ps aux| grep -e $GREP_NAME | grep -v grep | awk '{ print $2 }' )"
+    check_java="$(ps aux| grep -e 'agent -f {{logstash_etc_dir}}' | grep -v grep | awk '{ print $2 }' )"
     echo $check_java
 }
 start(){
     PID=$(JAVA_PID)
     if  [ -n "$PID" ] ; then
         echo "$NAME is already running (PID: $PID)"
+        exit 0        
     else
         if [ "$foreground" == "fg" ]; then
             echo "start foreground"
-            $ExecFile $ExecArg
+            $ExecFile $ExecArg $extra_args
         else
             echo -n  "Starting $NAME "    
             $ExecFile $ExecArg >> {{logstash_log_dir}}/logstash.log 2>&1 &
@@ -43,10 +43,9 @@ start(){
             PID=$(JAVA_PID)
             if [ -n "$PID" ]; then
                 echo "[ OK ]" 
-                return 0
             else
                 echo "[ FAILED ]"
-                return 1
+                exit 1
             fi
         fi
     fi
@@ -70,10 +69,9 @@ stop() {
         PID=$(JAVA_PID)
         if [ -n "$PID" ]; then
             echo "[ FAILED ]"
-            return 1
+            exit 1
         else
             echo "[ OK ]"
-            return 1
         fi      
     else
         echo "$NAME not running."
@@ -88,13 +86,21 @@ status() {
         echo "$NAME is not running" 
     fi
 }
- 
+
+validate(){
+    echo "$NAME validating config files"
+    {{logstash_start_cmd}} --configtest
+}
+
 case "$1" in
  start)
         foreground="$2"
+        extra_args="$3"
         start ;;
  stop)
         stop ;;
+validate)
+        validate;;      
  restart)
        stop
        start ;;

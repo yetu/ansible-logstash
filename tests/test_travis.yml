@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - ansible-logstash
+  post_tasks:
+    - name: check if port 9456 tcp of logstash is open
+      wait_for: 
+        port=9456
+        delay=10

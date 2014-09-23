@@ -1,0 +1,52 @@
+###nginx parser
+
+input {
+  tcp {
+    type => "nginx"
+    port => 9877  
+  }
+}
+
+filter {
+  if "nginx" in [type] {
+    grok {
+      patterns_dir => "./pattern"  
+      match => [ "message", "%{NGINXACCESSL}" ]
+    }
+    if "_grokparsefailure" not in [tags] {
+      date {
+        locale => "en"
+        match => [ "ts" , "dd/MMM/yyy:HH:mm:ss Z" ]
+        remove_field => [ "ts" ]
+      }
+      geoip {
+        source => "clientip"
+        target => "geoip"
+        add_field => [ "[geoip][coordinates]", "%{[geoip][longitude]}" ]
+        add_field => [ "[geoip][coordinates]", "%{[geoip][latitude]}"  ]
+      }
+      mutate {
+        convert => [ "[geoip][coordinates]", "float" ]
+        add_tag => [ "matched" ]
+      }
+    }
+  }
+}
+
+output { 
+  if "nginx" in [type]{
+    if "_grokparsefailure" in [tags] {
+      file {
+          path =>  "/tmp/logstash_nginx_9877_match_fail.txt"
+          codec => rubydebug 
+      }  
+    }
+    else if "matched" in [tags] {
+      stdout { codec => rubydebug }
+      file { 
+          path =>  "/tmp/logstash_nginx_9877_match_ok.txt"
+          codec => rubydebug 
+      }  
+    }
+  }
+}

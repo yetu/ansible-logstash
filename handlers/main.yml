@@ -1,11 +1,3 @@
-- name: restart logstash-server
-  assert: { that: True }
-  changed_when: True
-  notify:
-    - validate conf
-    - restart supervisor
-    - restart initd
-
 - name: validate conf
   command: "{{logstash_start_cmd}} --configtest"
   changed_when: False
@@ -17,18 +9,11 @@
     name=supervisor 
     state=restarted 
     enabled=yes
-  when: logstash_start_stop == "supervisor"
+  when: logstash_start_stop == "supervisor" and not logstash_start.changed 
 
-- name: restart initd logstash-server
+- name: restart initd
   service: 
     name=logstash 
-    state=restarted 
-    enabled=yes
-  when: logstash_start_stop == "initd"
-
-- name: restart kibana
-  service: 
-    name=kibana 
     state=restarted 
     enabled=yes
   when: logstash_start_stop == "initd"

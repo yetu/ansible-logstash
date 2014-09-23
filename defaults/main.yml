@@ -2,50 +2,68 @@
 ## Version
 logstash_version_major  : "1.4"
 logstash_version_minor  : "2"
-## Director structure 
-logstash_install_dir    : "/opt/logstash/{{logstash_version}}"
-logstash_sources_dir    : "/opt/logstash/source"
-logstash_extra_dir      : "/opt/logstash/extra"
-logstash_etc_dir        : "/etc/logstash.d/indexer/"
-logstash_log_dir        : "/var/log/logstash"
-
 ## Startup variables
 logstash_start_stop     : "initd" ## initd or supervisor
+logstash_base_dir       : "/opt/logstash"
+logstash_log_dir        : "/var/log/logstash"
 
+## Indexer conf from a file or template
+indexer_conf_install    : False
+indexer_conf            :
+                          - name: nginx.conf
+                            src : nginx_logstash.j2
+
+## Indexer config variable nased
+indexer_conf_var_install : true
+logstash_default_port    : 9123
+
+indexer_conf_var_input   : |
+    tcp { 
+        port => {{logstash_default_port}}
+        type => "default_tcp"
+    }
+    tcp { 
+        port => 9124
+    }    
+
+indexer_conf_var_filter :  |
+    # example add field tcp
+    if [type] == "default_tcp" {
+        mutate {
+            add_field => { "source" => "MSG was sent by %{host} to tcp" }
+            add_tag => [ "matched" ]
+        }
+    }
+
+indexer_conf_var_output :  |
+    if "matched" in [tags] and "default_tcp" in [type]{
+        file { path => "/tmp/logstash_default_tcp_9124_match_ok.txt" }
+    } 
+    else if "matched" not in [tags] and "_grokparsefailure" not in [tags] {
+        file { path => "/tmp/logstash_all_others.txt" }
+    } 
+
+
+## Plugins install extra grok pattern in file
+extra_patterns_install  : False
+extra_patterns          :
+                          - name: nginx
+                            src : nginx.grok
+
+## Clear delete
+logstash_clear_config   : false
+
+## Probably you dont need to edit beyond here 
+## Director structure 
+logstash_install_dir    : "{{logstash_base_dir}}/{{logstash_version}}"
+logstash_sources_dir    : "{{logstash_base_dir}}/source"
+logstash_extra_dir      : "{{logstash_base_dir}}/extra"
+logstash_etc_dir        : "/etc/logstash.d/indexer"
 logstash_bin            : "{{logstash_install_dir}}/bin/logstash"
 logstash_agent_arg      : "agent -f"
 logstash_extra_arg      : ""
 logstash_start_cmd      : "{{logstash_bin}} {{logstash_agent_arg}} {{logstash_extra_arg}} {{logstash_etc_dir}}" 
-
-kibana_bin              : "{{logstash_install_dir}}/bin/logstash-web"
 ## Download URL
 logstash_url            : "https://download.elasticsearch.org/logstash/logstash/logstash"
 ##compiled full version string
 logstash_version        : "{{logstash_version_major}}.{{logstash_version_minor}}"
-
-## Default values you could overwrite them
-logstash_input :  |
-    tcp { 
-        port => 3030
-        type => "tcp"
-    }
-
-logstash_filter :  |
-    # dummy filter. Add your own
-    if [type] =~ "somemessage" {
-        mutate {
-            add_tag => [ "somemessage" ]
-        }
-    }
-    # example add field tcp
-    if [type] == "tcp" {
-        mutate {
-            add_field => { "source" => "MSG was sent by %{host} to tcp" }
-        }
-    }
-
-logstash_output :  |
-    file {
-        path => "/tmp/stdout_logstash.txt"
-    }
-

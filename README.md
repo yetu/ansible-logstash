@@ -1,10 +1,21 @@
-ansible-logstash
-================
+ansible-logstash role
+=====================
+
+[logstash](http://http://logstash.net/) is a tool for managing events and logs. You can use it to collect logs, parse them, and store them for later use (like, for searching).
+
+Requirements
+------------
+tested on Ubuntu 12.04 but should work with most *nix that support init.d or supervisor and java 
+
+Role Variables
+--------------
+
+TODO FILL
 
 ### Credits
 Orignal code comes from https://github.com/valentinogagliardi/ansible-logstash
-I wanted to have a logstash and forwarder in a separte role with more controll deployment 
+
+Adham Helal https://github.com/ahelal/
 
 ## TODO:
-* Expermintal kibana support for lostash-web 
-* expermintal grok pattern support for ansible
+* logstash- forwarder

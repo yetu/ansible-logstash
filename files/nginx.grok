@@ -1,0 +1,8 @@
+## nginx access pattern 
+
+OSPACE %{SPACE}?
+NGINXACCESSL %{NGINXBASE}%{NGINXMID}%{NGINXEXTRA}
+NIGINXREQ (?:%{URIPATHPARAM}|-|%{URI}|%{DATA})
+NGINXBASE %{IPORHOST:clientip} %{USER:ident} %{USER:auth} \[%{HTTPDATE:ts}\] 
+NGINXMID "%{WORD:verb}?%{OSPACE}%{NIGINXREQ:request}?(?: HTTP/%{NUMBER:httpversion}|-)?" %{NUMBER:response} (?:%{NUMBER:bytes:int}|-) (?:%{QS:referrer}) (?:%{QS:agent})
+NGINXEXTRA %{OSPACE}%{QS:xforwardedfor}?%{OSPACE}%{IPORHOST:host}?%{OSPACE}%{BASE10NUM:request_duration}?

@@ -1,6 +1,14 @@
 - name: log-server
   hosts: all
   sudo: true
-  
+  vars : 
+      extra_patterns_install   : true
+      indexer_conf_install     : true
   roles:
-    - { role: adham.helal.logstash }
+    - adham.helal.logstash
+  post_tasks:
+    - name: check if test port tcp of logstash is open
+      wait_for: 
+        port={{logstash_default_port}}
+        delay=2
+        timeout=60    

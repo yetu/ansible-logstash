@@ -1,11 +1,16 @@
 ---
-## Not functional for now
+
 - name: plugins | grok extra patterns
   copy: 
-    src="{{item}}"
-    dest="{{logstash_etc_dir}}/{{item}}" 
+    src="{{item.src}}"
+    dest="{{logstash_install_dir}}/patterns/{{item.name}}" 
     owner=root 
     group=root 
     mode=0644
-  when: extra_patterns
+  when: extra_patterns_install
+  with_items: extra_patterns
+  notify: 
+    - validate conf  
+    - restart supervisor
+    - restart initd  
   tags: logstash-server  

@@ -42,9 +42,9 @@ output {
       }  
     }
     else if "matched" in [tags] {
-      stdout { codec => rubydebug }
       file { 
           path =>  "/tmp/logstash_nginx_9877_match_ok.txt"
+          flush_interval => 0
           codec => rubydebug 
       }  
     }

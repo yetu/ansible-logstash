@@ -31,5 +31,7 @@ test_pass $default_tcp 1
 echo -n "checking nginx Fail logs : "
 test_pass $nginx_fail 1
 
+cat /tmp/logstash_nginx_9877_match_ok.txt
 echo -n "checking  nginx Ok logs : "
 test_pass $nginx_ok 2
+

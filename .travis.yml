@@ -27,6 +27,7 @@ script:
       | grep -q 'changed=0.*failed=0'
       && (echo 'Idempotence test: pass' && exit 0)
       || (echo 'Idempotence test: fail' && exit 1)
-
+    - pwd
+    - ls -l 
     # 4th:  Application test
     - ./tests/test_logs.sh

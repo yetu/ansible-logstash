@@ -1,6 +1,9 @@
 ---
 - hosts: localhost
   remote_user: root
+  vars : 
+      extra_patterns_install   : true
+      indexer_conf_install     : true  
   roles:
     - ansible-logstash
   post_tasks:

@@ -10,7 +10,7 @@ cd tests
 echo "ls -l"
 
 
-sleep 4
+sleep 30
 cat nginx_logs.txt | nc -v localhost 9877
 cat default_logs_ok.txt | nc -v localhost 9123
 cat default_logs_fail.txt  | nc -v localhost 9124
@@ -18,6 +18,7 @@ cat default_logs_fail.txt  | nc -v localhost 9124
 echo "/tmp ls"
 ls -l /tmp
 
+sleep 20
 echo "java ps"
 ps aux | grep java
 echo "log of logstash"

@@ -1,5 +1,6 @@
 ansible-logstash role
 =====================
+[![Build Status](https://travis-ci.org/ahelal/ansible-logstash.svg?branch=master)](https://travis-ci.org/ahelal/ansible-logstash)
 
 [logstash](http://http://logstash.net/) is a tool for managing events and logs. You can use it to collect logs, parse them, and store them for later use (like, for searching).
 

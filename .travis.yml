@@ -29,4 +29,4 @@ script:
       || (echo 'Idempotence test: fail' && exit 1)
 
     # 4th:  Application test
-    # Nothing for this role 
+    - tests/test_logs.sh

@@ -1,3 +1,3 @@
 8.8.8.8 - - [23/Sep/2014:15:08:18 +0000] "GET /folder/page HTTP/1.1" 301 185 "-" "NING/1.0"
-7.7.7.7 - - [23/Sep/2014:18:30:02 +0000] "DELETE /folder/page HTTP/1.1" 204 0 "http://localhost:63342/tv/index.html" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.122 Safari/537.36"
+7.7.7.7 - - [23/Sep/2014:18:30:02 +0000] "DELETE /folder/page HTTP/1.1" 204 0 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.122 Safari/537.36"
 6.6.6.6 - - [23/Sep/20124:15:09:19 +0000] "GET /login.php HTTP/1.1" 200 34 "-" "NING/1.0"

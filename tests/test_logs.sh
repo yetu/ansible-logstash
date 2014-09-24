@@ -3,7 +3,7 @@ set -e
 
 echo "sleep 30 to make sure logstash is up"
 sleep 30
-
+cd  tests
 cat nginx_logs.txt | nc -v localhost 9877
 cat default_logs_ok.txt | nc -v localhost 9123
 cat default_logs_fail.txt  | nc -v localhost 9124

@@ -20,6 +20,8 @@ ls -l /tmp
 
 echo "java ps"
 ps aux | grep java
+echo "log of logstash"
+cat /var/log/logstash
 other=$(cat /tmp/logstash_all_others.txt | wc -l)
 default_tcp=$(cat /tmp/logstash_default_tcp_9124_match_ok.txt | wc -l)
 nginx_fail=$(cat /tmp/logstash_nginx_9877_match_fail.txt | wc -l)

@@ -7,7 +7,7 @@
   roles:
     - ansible-logstash
   post_tasks:
-    - name: check if port 9456 tcp of logstash is open
+    - name: check if port 9124 tcp of logstash is open
       wait_for: 
-        port=9456
+        port=9124
         delay=10

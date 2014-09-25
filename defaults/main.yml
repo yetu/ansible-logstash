@@ -7,16 +7,28 @@ logstash_start_stop     : "initd" ## initd or supervisor
 logstash_base_dir       : "/opt/logstash"
 logstash_log_dir        : "/var/log/logstash"
 
+## Logstash forward etc
+logstash_forwarder_etc      : "/etc/logstash-forwarder"
+logstash_forwarder_domain   : "{{ansible_hostname}}:5043"
+
+## Componenets flag to Install
+logstash_server_install     : true
+logstash_forwarder_install  : False
+logstash_ssl_install        : true
+indexer_conf_install        : False
+indexer_conf_var_install    : true
+indexer_conf_var_install    : true
+
+## Clear delete
+logstash_clear_config       : false
+
 ## Indexer conf from a file or template
-indexer_conf_install    : False
 indexer_conf            :
                           - name: nginx.conf
                             src : nginx_logstash.j2
 
 ## Indexer config variable nased
-indexer_conf_var_install : true
 logstash_default_port    : 9123
-
 indexer_conf_var_input   : |
     tcp { 
         port => {{logstash_default_port}}
@@ -25,6 +37,13 @@ indexer_conf_var_input   : |
     tcp { 
         port => 9124
     }    
+    lumberjack {
+        port => 5043
+        # The paths to your ssl cert and key
+        ssl_certificate => "{{logstash_ssl_cert_file}}"
+        ssl_key => "{{logstash_ssl_key_file}}"
+    }
+
 
 indexer_conf_var_filter :  |
     # example add field tcp
@@ -43,15 +62,10 @@ indexer_conf_var_output :  |
         file { path => "/tmp/logstash_all_others.txt" }
     } 
 
-
 ## Plugins install extra grok pattern in file
-extra_patterns_install  : False
 extra_patterns          :
                           - name: nginx
                             src : nginx.grok
-
-## Clear delete
-logstash_clear_config   : false
 
 ## Probably you dont need to edit beyond here 
 ## Director structure 
@@ -67,3 +81,62 @@ logstash_start_cmd      : "{{logstash_bin}} {{logstash_agent_arg}} {{logstash_ex
 logstash_url            : "https://download.elasticsearch.org/logstash/logstash/logstash"
 ##compiled full version string
 logstash_version        : "{{logstash_version_major}}.{{logstash_version_minor}}"
+
+## SSL Cert
+logstash_ssl_dir        : /etc/ssl/logstash
+logstash_ssl_cert_file  : "{{logstash_ssl_dir}}/logstash.crt"
+logstash_ssl_key_file  : "{{logstash_ssl_dir}}/logstash.key"
+
+## ******************* Test certificate PLEASE REPLACE *************************
+logstash_cert  : |
+                    -----BEGIN CERTIFICATE-----
+                    MIIDtTCCAp2gAwIBAgIJAOhuoXPT/0/HMA0GCSqGSIb3DQEBBQUAMEUxCzAJBgNV
+                    BAYTAkFVMRMwEQYDVQQIEwpTb21lLVN0YXRlMSEwHwYDVQQKExhJbnRlcm5ldCBX
+                    aWRnaXRzIFB0eSBMdGQwHhcNMTQwOTI1MTYxNzU1WhcNMTQxMDI1MTYxNzU1WjBF
+                    MQswCQYDVQQGEwJBVTETMBEGA1UECBMKU29tZS1TdGF0ZTEhMB8GA1UEChMYSW50
+                    ZXJuZXQgV2lkZ2l0cyBQdHkgTHRkMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIB
+                    CgKCAQEAu3HL797YI3+2pNvRL8IODxc5SN/n6YK1wSMG1wV3l0kyi7UlG9FDg1Uh
+                    2FEjsVUIPiIvPUrUT25ncagKsYFiXJXVg9UVCd1rCNUF9wlzZWySCBaZlDeBkWn9
+                    KyXRPZeLxMqGcKkVKFE9ktEe6OLRXREtLVXqFnVAtqGI4AmNJ79BpG4da8AW8hqV
+                    KTaBLh5GQsNfReQjf48YPT2Bmq3H/nrwceJARx3ZN7cA/wFmAz9DgKttJRznXeO2
+                    w11fkDhbrhJA5Plk3N+Jf1LSjs8mFhy5YK/tIxgZZMWojlEzwbkGRbZmb29XMhTR
+                    F2mnP4Gq+C3/lG+BE3+a84OU6xnSvwIDAQABo4GnMIGkMB0GA1UdDgQWBBSoI987
+                    V2zoc6554VDdyyWU7XFhDDB1BgNVHSMEbjBsgBSoI987V2zoc6554VDdyyWU7XFh
+                    DKFJpEcwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgTClNvbWUtU3RhdGUxITAfBgNV
+                    BAoTGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZIIJAOhuoXPT/0/HMAwGA1UdEwQF
+                    MAMBAf8wDQYJKoZIhvcNAQEFBQADggEBAGlcQFRJy22Eb6ZtxroIqmEJeXYN01rE
+                    WUHBj8rzwDow1iyPnx2LVOBxMMZ78a2lzqDmgt3OL41JLdbwBEPMNe3KpfiSNnAv
+                    cYRYmn+Ju6baSi3FLmFaPZfcjT92kGgOzoDkBbkToZagbvwzjFvztBpJKlvYcrfZ
+                    rHsvQjtmX2T9WWIaYU7gyPJWKVJpFSeLInBz0a597apuZ2SV6MkVIt/OnWPVq6+Z
+                    MKVJbdRzW8/mVdq39aM0s/pmuhvay0uk5LCaXiDNfKnCDUtPQwZluoTPaM2wCmgy
+                    wgasGphQNwXgAxlKeeV14l3TdjQIJqy1vJB8KLNQGCVwG5TigsZsaSQ=
+                    -----END CERTIFICATE-----         
+logstash_key  : |
+                    -----BEGIN RSA PRIVATE KEY-----
+                    MIIEogIBAAKCAQEAu3HL797YI3+2pNvRL8IODxc5SN/n6YK1wSMG1wV3l0kyi7Ul
+                    G9FDg1Uh2FEjsVUIPiIvPUrUT25ncagKsYFiXJXVg9UVCd1rCNUF9wlzZWySCBaZ
+                    lDeBkWn9KyXRPZeLxMqGcKkVKFE9ktEe6OLRXREtLVXqFnVAtqGI4AmNJ79BpG4d
+                    a8AW8hqVKTaBLh5GQsNfReQjf48YPT2Bmq3H/nrwceJARx3ZN7cA/wFmAz9DgKtt
+                    JRznXeO2w11fkDhbrhJA5Plk3N+Jf1LSjs8mFhy5YK/tIxgZZMWojlEzwbkGRbZm
+                    b29XMhTRF2mnP4Gq+C3/lG+BE3+a84OU6xnSvwIDAQABAoIBABT0DZYM1SBywFoB
+                    cIrkKGorcG3jCauivuqOHc+fftTci9fuMe3AIMnnlFb4CwNhvAAmFh3F5aHTd6DO
+                    5hMdoX80CKAqC6YEqFheZ8JLviiSUGizDgvxgHxe2rweCBvYevlOomSpogHVwwpM
+                    ciYaZMkAiIpO1lIYXVmNCR3yM2ND3o6/T5tknIMJ/Yaqm6e/mS0GW5U7uCAIPYp2
+                    5mEGnDm1p6TAXkhwKYXdnNhESlZhuMo2fuYOxmehOq/hZN5zGy9RuHGXd+aQ+S5p
+                    H+fSBdvoe0CYr6U4HX1novoL9S5a/YA1mfEdPySqLNfDvjT6mMQ/h/wQC9P6icgv
+                    Px43JFECgYEA+c4yXQaI/Eqc/5LhHNujxp19FZOsUHhQi9YcXG0//ewb1X57Crvf
+                    VA9UxYoOIg0k3vXv4THkPkW9JP1iEkT4f57nP9YEp4VhYjs3aVSMth+Nbj6iigJQ
+                    UsgKWCSCcAXpUhu/pytstmNv13Q1z1wFZxBq14SCqUhAeqSxcR8FdH0CgYEAwBe5
+                    Hkzi9lMePLyOwj1CNNf1r4mRTbDHrwruhEw3BfRkye+y3J48++WH8m2ShO8K1i6l
+                    JMak5qbOFH7DS59BetSAEPJx22R2IATq5c4TRiwm6Pj105TNjUA6/H0iTszJxK97
+                    P+eTowv1yHA7z8Ghqg1aCWVB5ooZHY6XvN7wtOsCgYASRubibYb6Ro9EF8AGt389
+                    Geq7+GkEHjluccTzcj7bWjoTHcTs3SAS62g9Z8Nu9F09PutFI7xaXgnfufZB9e/k
+                    joDG5+bBRv4ADOsZ9siwzpAvf7+ur0qnM+Gl30332kbe7g7QsVmr4oydS/Bf8pCm
+                    oMngaN6SeinVj1U4PJfOlQKBgE8JM8Sw0+2P83AAESkAdX4yoUbxblSt+Osfr1XF
+                    2hncHaAsvMYjYWovXck0pkWF6UqI9K/1/6FbXo12Prqdsx5r0qmmZ4xigGvaOiAF
+                    s057GiNfVB4TKqQEmoCKqBQOFLKVlTuM9+TtJdqruyBXRkImrjYRcJT/myfbJLm0
+                    bQuzAoGAcOP9uCmC36eaphpRpTsD42r779VFS9hQwQGMWrDTg5H+gvuwDSjO7HD4
+                    5i1x89ohISi91FYPj5bGrYahLvJUUmnygEEBsyjRn9tnpPA/me7TbnTHpeUj58t/
+                    g0kxzh8VtFwCXLIiCPsE1nZXmQvud0xkTsq7oRKoTyG1DBRwmfQ=
+                    -----END RSA PRIVATE KEY-----   
+

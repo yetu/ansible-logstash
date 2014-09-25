@@ -99,10 +99,12 @@ Provide an array with name and source path of your gork pattern file
                          src : nginx.grok
 
 ### Credits
-Original code comes from https://github.com/valentinogagliardi/ansible-logstash
+Snipets of code from https://github.com/valentinogagliardi/ansible-logstash
+Snipets of code from https://github.com/WeAreFarmGeek/ansible-logstash-forwarder
 
 Adham Helal https://github.com/ahelal/
 
 ## TODO:
+* Update Readme with ssl and logstash-forwarder, install component
+* logstash-forwarder extra config
 * More patterns
-* logstash- forwarder

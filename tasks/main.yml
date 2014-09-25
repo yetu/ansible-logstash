@@ -1,15 +1,30 @@
 ---
 - include: java.yml
+  when: logstash_server_install
   tags: logstash-server
 
 - include: logstash_install.yml
+  when: logstash_server_install
   tags: logstash-server
 
 - include: logstash_config.yml
+  when: logstash_server_install
   tags: logstash-server
 
 - include: plugins.yml
+  when: logstash_server_install
   tags: logstash-server
 
 - include: start-stop.yml
+  when: logstash_server_install
   tags: logstash-server
+
+- include: logstash_ssl.yml
+  when: logstash_ssl_install
+  tags: 
+   - logstash-server  
+   - logstash-forward
+
+- include: logstash_forwarder.yml
+  when: logstash_forwarder_install  
+  tags: logstash-forward

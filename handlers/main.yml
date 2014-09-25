@@ -17,3 +17,8 @@
     state=restarted 
     enabled=yes
   when: logstash_start_stop == "initd"
+
+- name: restart logstash-forwarder
+  service: 
+    name=logstash-forwarder 
+    state=restarted  

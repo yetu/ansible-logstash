@@ -1,0 +1,41 @@
+---
+- name: logstash_forward | Ensure logstash-forwarder has its config file
+  template: 
+    src=logstash_forwarder/logstash-forwarder.conf.j2
+    dest={{logstash_forwarder_etc}}
+    owner=root 
+    group=root 
+    mode=0755
+  notify:
+  - restart logstash-forwarder
+
+- name: logstash_forward |  Copy logstash-forwarder deb file
+  copy: 
+    src=logstash-forwarder_0.3.1_amd64.deb 
+    dest=/tmp/logstash-forwarder_0.3.1.deb
+
+- name: logstash_forward |  Install logstash-forwarder
+  shell: dpkg --skip-same-version -i /tmp/logstash-forwarder_0.3.1.deb
+  register: dpkg_result
+
+- name: logstash_forward |  Restart Logstash
+  when: "dpkg_result.stdout.startswith('Selecting')"
+  service: name=logstash-forwarder state=restarted
+
+- name: logstash_forward |  copy logstash-forwarder init file
+  copy: 
+    src=logstash-forwarder.init 
+    dest=/etc/init.d/logstash-forwarder 
+    owner=root 
+    group=root 
+    mode=645
+
+- name: logstash_forward | Ensure old logstash-forwarder init file is not there
+  file: 
+    path=/etc/init.d/logstash-forwarder.init 
+    state=absent
+
+- name: logstash_forward | Enable logstash-forwarder init file
+  shell: update-rc.d logstash-forwarder defaults
+  notify:
+  - restart logstash-forwarder

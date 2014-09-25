@@ -1,0 +1,24 @@
+---
+- name: ssl | Ensure SSL directory is present
+  file: 
+    path="{{logstash_ssl_dir}}"
+    owner=root 
+    group=root 
+    mode=0700
+    state=directory
+
+- name: ssl |  Ensure logstash has crt file
+  template: 
+    src=ssl/logstash.crt.j2
+    dest="{{logstash_ssl_cert_file}}"
+    owner=root 
+    group=root 
+    mode=0755
+
+- name: ssl |  Ensure logstash has its SSL private key
+  template: 
+    src=ssl/logstash.key.j2
+    dest="{{logstash_ssl_key_file }}"
+    owner=root 
+    group=root 
+    mode=0755

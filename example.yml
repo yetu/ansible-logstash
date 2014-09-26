@@ -5,6 +5,7 @@
       logstash_forwarder_install : true
       extra_patterns_install     : true
       indexer_conf_install       : true
+      logstash_forwarder_install : true
   roles:
     - adham.helal.logstash
   post_tasks:

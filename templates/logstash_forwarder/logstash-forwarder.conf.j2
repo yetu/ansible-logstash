@@ -3,31 +3,21 @@
     "servers": ["{{logstash_forwarder_domain}}"],
     "ssl key": "{{logstash_ssl_key_file}}",
     "ssl ca": "{{logstash_ssl_cert_file}}",
-    "timeout": 15
+    "timeout": {{logstash_forwarder_timeout}}
   },
-
   "files": [
+{% for n in range(1, logstash_forwarder_files|count+1) %}
     {
       "paths": [
-        "/var/log/messages",
-        "/var/log/auth.log"
-      ],
-      "fields": {"type": "syslog" }
-    }, {
-      "paths": [ 
-        "/var/log/faillog",
-        "/var/log/fail2ban.log"
-      ],
-      "fields": {"type": "fail2ban" }
-    },{
-      "paths": [ "/var/log/nginx/access.log" ],
-      "fields": { "type": "nginx-access" }
-    }, {
-      "paths": [ "/var/log/nginx/error.log" ],
-      "fields": { "type": "nginx-error" }
-    }, {
-      "paths": [ "/var/www/*/log/logstash_production.log" ],
-      "fields": { "type": "rails" }
-    }
+{% for paths in logstash_forwarder_files[n-1].paths %}
+          "{{paths}}"{% if loop.index != logstash_forwarder_files[n-1].paths|count %},{% endif %}
+
+{% endfor %} 
+       ]
+{% if logstash_forwarder_files[n-1].fields is defined %}
+      , "fields": { {% for k,v in  logstash_forwarder_files[n-1].fields.iteritems() %} "{{ k }}" : "{{ v }}"{% if loop.index != logstash_forwarder_files[n-1].fields|count %},{% endif %}{% endfor %} }
+{%endif%}
+    }{%if n != logstash_forwarder_files|count %},{% endif %}
+{% endfor %}  
   ]
 }

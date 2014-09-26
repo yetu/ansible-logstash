@@ -10,6 +10,7 @@ logstash_log_dir        : "/var/log/logstash"
 ## Logstash forward etc
 logstash_forwarder_etc      : "/etc/logstash-forwarder"
 logstash_forwarder_domain   : "{{ansible_hostname}}:5043"
+logstash_forwarder_timeout  : 15
 
 ## Componenets flag to Install
 logstash_server_install     : true
@@ -27,7 +28,19 @@ indexer_conf            :
                           - name: nginx.conf
                             src : nginx_logstash.j2
 
-## Indexer config variable nased
+## Logstash forwarder file config
+logstash_forwarder_files:
+         - paths: 
+                 - "/var/log/messages"
+                 - "/var/log/auth.log"
+
+
+         - paths: 
+                 - "/var/log/faillog"
+                 - "/var/log/fail2ban.log"
+
+
+## Indexer config variable 
 logstash_default_port    : 9123
 indexer_conf_var_input   : |
     tcp { 

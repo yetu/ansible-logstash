@@ -17,10 +17,7 @@
 - name: logstash_forward |  Install logstash-forwarder
   shell: dpkg --skip-same-version -i /tmp/logstash-forwarder_0.3.1.deb
   register: dpkg_result
-
-- name: logstash_forward |  Restart Logstash
-  when: "dpkg_result.stdout.startswith('Selecting')"
-  service: name=logstash-forwarder state=restarted
+  changed_when:  '"Setting up" in dpkg_result.stdout'
 
 - name: logstash_forward |  copy logstash-forwarder init file
   copy: 
@@ -28,14 +25,11 @@
     dest=/etc/init.d/logstash-forwarder 
     owner=root 
     group=root 
-    mode=645
-
-- name: logstash_forward | Ensure old logstash-forwarder init file is not there
-  file: 
-    path=/etc/init.d/logstash-forwarder.init 
-    state=absent
-
-- name: logstash_forward | Enable logstash-forwarder init file
-  shell: update-rc.d logstash-forwarder defaults
+    mode=755
   notify:
   - restart logstash-forwarder
+
+- name: logstash_forward |  Ensure logstash-forwarder is up
+  service: 
+    name=logstash-forwarder 
+    state=started

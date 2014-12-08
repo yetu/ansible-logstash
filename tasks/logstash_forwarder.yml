@@ -20,8 +20,8 @@
   changed_when:  '"Setting up" in dpkg_result.stdout'
 
 - name: logstash_forward |  copy logstash-forwarder init file
-  copy: 
-    src=logstash-forwarder.init 
+  template:
+    src=logstash_forwarder/logstash-forwarder.init
     dest=/etc/init.d/logstash-forwarder 
     owner=root 
     group=root 

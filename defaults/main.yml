@@ -11,6 +11,7 @@ logstash_log_dir        : "/var/log/logstash"
 logstash_forwarder_etc      : "/etc/logstash-forwarder"
 logstash_forwarder_domain   : "{{ansible_hostname}}:5043"
 logstash_forwarder_timeout  : 15
+logstash_forwarder_args     : "-config {{logstash_forwarder_etc}} -spool-size 100 -log-to-syslog"
 
 ## Componenets flag to Install
 logstash_server_install     : true
@@ -33,7 +34,6 @@ logstash_forwarder_files:
          - paths: 
                  - "/var/log/messages"
                  - "/var/log/auth.log"
-
 
          - paths: 
                  - "/var/log/faillog"
